@@ -1,0 +1,12 @@
+document.getElementById('buscar-barrio').addEventListener('click', async () => {
+    const barrio = document.getElementById('barrio').value;
+
+    const response = await fetch('https://mi-backend.com/consultar-barrio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ barrio }),
+    });
+
+    const data = await response.json();
+    console.log('Datos del barrio:', data);
+});
