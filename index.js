@@ -37,7 +37,7 @@ app.post("/shipping-rates", async (req, res) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ID_Sesion: process.env.ID_SESION,
-          Barrrio: destination.city,
+          Barrio: destination.city,
         }),
       }
     );
@@ -45,9 +45,13 @@ app.post("/shipping-rates", async (req, res) => {
     const barrioData = await barrioResponse.json();
     console.log("Respuesta de wsBarrio:", barrioData);
 
-    if (barrioData.error) {
-      console.error("Error en la respuesta de wsBarrio:", barrioData.error);
-      return res.status(400).json({ error: barrioData.error });
+    if (!barrioData.data || barrioData.data.length === 0) {
+      console.error(
+        "Error en la respuesta de wsBarrio: datos vacíos o no encontrados"
+      );
+      return res
+        .status(400)
+        .json({ error: "Datos del barrio no encontrados." });
     }
 
     const { K_Estado, K_Ciudad, K_Barrio, Codigo_Postal } = barrioData.data[0];
@@ -76,6 +80,8 @@ app.post("/shipping-rates", async (req, res) => {
       CostoMercaderia: "",
       esRecoleccion: 0,
     };
+
+    console.log("Cuerpo de la solicitud a wsObtieneCosto:", body);
 
     // Llamada a la API de DAC para calcular las tarifas
     const response = await fetch(
