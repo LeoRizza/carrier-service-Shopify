@@ -68,7 +68,7 @@ app.post("/shipping-rates", async (req, res) => {
       ID_Sesion: process.env.ID_SESION,
       K_Cliente_Remitente: 730738,
       K_Cliente_Destinatario: 5,
-      K_Barrio,
+      K_Barrio: K_Barrio,
       K_Ciudad_Destinatario: K_Ciudad,
       K_Estado_Destinatario: K_Estado,
       K_Pais_Destinatario: 1,
