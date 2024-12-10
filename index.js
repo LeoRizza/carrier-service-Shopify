@@ -37,7 +37,7 @@ app.post("/shipping-rates", async (req, res) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ID_Sesion: process.env.ID_SESION,
-          Barrio: destination.city,
+          Barrrio: destination.city,
         }),
       }
     );
