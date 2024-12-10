@@ -21,6 +21,7 @@ app.post("/shipping-rates", async (req, res) => {
   // Extraer los datos necesarios de la solicitud de Shopify
   const { origin, destination, items } = rate;
 
+
   if (!origin || !destination || !items) {
     console.error("Faltan datos necesarios para calcular las tarifas.");
     return res
@@ -28,7 +29,18 @@ app.post("/shipping-rates", async (req, res) => {
       .json({ error: "Faltan datos necesarios para calcular las tarifas." });
   }
 
+
   try {
+    //verificar id
+    if (!process.env.ID_SESION) {
+        console.error("ID_Sesion no está definida en las variables de entorno.");
+        return res
+          .status(500)
+          .json({ error: "ID_Sesion no está definida en el servidor." });
+      }
+      console.log("Valor de ID_Sesion:", process.env.ID_SESION);
+
+    //verificar barrio
     console.log("Barrio que se envía en la solicitud a wsBarrio:", destination.city);
     const barrioResponse = await fetch(
       "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsBarrio",
