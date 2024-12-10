@@ -42,8 +42,9 @@ app.post("/shipping-rates", async (req, res) => {
       }
     );
 
+    console.log("Estado de la respuesta de wsBarrio:", barrioResponse.status);
     const barrioData = await barrioResponse.json();
-    console.log("Respuesta de wsBarrio:", barrioData);
+    console.log("Respuesta completa de wsBarrio:", barrioData);
 
     if (!barrioData.data || barrioData.data.length === 0) {
       console.error(
@@ -55,6 +56,12 @@ app.post("/shipping-rates", async (req, res) => {
     }
 
     const { K_Estado, K_Ciudad, K_Barrio, Codigo_Postal } = barrioData.data[0];
+    console.log("Datos extraídos de wsBarrio:", {
+      K_Estado,
+      K_Ciudad,
+      K_Barrio,
+      Codigo_Postal,
+    });
 
     // Preparar los parámetros necesarios para la API de DAC
     const body = {
