@@ -29,7 +29,7 @@ app.post("/shipping-rates", async (req, res) => {
   }
 
   try {
-    // Consultar barrio utilizando la ciudad del destino
+    console.log("Barrio que se envía en la solicitud a wsBarrio:", destination.city);
     const barrioResponse = await fetch(
       "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsBarrio",
       {
