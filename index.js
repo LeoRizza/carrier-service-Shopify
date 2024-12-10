@@ -119,7 +119,4 @@ app.post("/shipping-rates", async (req, res) => {
   }
 });
 
-const PORT = 3000;
-app.listen(PORT, () =>
-  console.log(`Servidor corriendo en http://localhost:${PORT}`)
-);
+export default app;
