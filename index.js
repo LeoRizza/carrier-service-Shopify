@@ -76,7 +76,8 @@ app.post("/shipping-rates", async (req, res) => {
       Codigo_Postal,
     });
 
-    // Preparar los parámetros necesarios para la API de DAC
+    const Detalle_Paquetes = JSON.stringify([{ Tipo: "139", Cantidad: totalItems }]);
+    
     const body = {
       ID_Sesion: process.env.ID_SESION,
       K_Cliente_Remitente: 730738,
@@ -87,11 +88,11 @@ app.post("/shipping-rates", async (req, res) => {
       K_Pais_Destinatario: 1,
       CP_Destinatario: Codigo_Postal,
       Direccion_Destinatario: "Soromio 4232",
-      Detalle_Paquetes: "[{\"Tipo\":\"139\",\"Cantidad\":3}]",
+      Detalle_Paquetes: Detalle_Paquetes,
       K_Oficina_Destino: 0,
       K_Tipo_Envio: 1,
       Entrega: 2,
-      Paquetes_Ampara: totalItems, // Aquí usamos el total de items calculado
+      Paquetes_Ampara: totalItems, 
       K_Tipo_Guia: 2,
       usaBolsa: 0,
       esRecoleccion: 0,
@@ -99,7 +100,6 @@ app.post("/shipping-rates", async (req, res) => {
 
     console.log("Cuerpo de la solicitud a wsObtieneCosto:", body);
 
-    // Llamada a la API de DAC para calcular las tarifas
     const response = await fetch(
       "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsObtieneCosto_Nuevo",
       {
