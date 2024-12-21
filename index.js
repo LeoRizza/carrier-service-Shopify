@@ -30,7 +30,9 @@ app.post("/shipping-rates", async (req, res) => {
 
   // Calcular el total de items
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalWeight = items.reduce((sum, item) => sum + item.grams, 0);
   console.log("Total de items a enviar:", totalItems);
+  console.log("Total peso a enviar:", totalWeight);
 
   try {
     if (!process.env.ID_SESION) {
@@ -42,7 +44,10 @@ app.post("/shipping-rates", async (req, res) => {
     console.log("Valor de ID_Sesion:", process.env.ID_SESION);
 
     //verificar barrio
-    console.log("Barrio que se envía en la solicitud a wsBarrio:", destination.city);
+    console.log(
+      "Barrio que se envía en la solicitud a wsBarrio:",
+      destination.city
+    );
     const barrioResponse = await fetch(
       "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsBarrio",
       {
@@ -76,8 +81,24 @@ app.post("/shipping-rates", async (req, res) => {
       Codigo_Postal,
     });
 
-    const Detalle_Paquetes = JSON.stringify([{ Tipo: "139", Cantidad: totalItems }]);
-    
+    let tipo;
+    if (totalWeight <= 2000) tipo = "204";
+    else if (totalWeight <= 5000) tipo = "139";
+    else if (totalWeight <= 10000) tipo = "206";
+    else if (totalWeight <= 15000) tipo = "140";
+    else if (totalWeight <= 20000) tipo = "207";
+    else if (totalWeight <= 25000) tipo = "141";
+    else {
+      console.error("Peso excede el límite máximo de 25kg.");
+      return res
+        .status(400)
+        .json({ error: "El peso total excede el límite permitido de 25kg." });
+    }
+
+    const Detalle_Paquetes = JSON.stringify([
+      { Tipo: tipo, Cantidad: totalItems },
+    ]);
+
     const body = {
       ID_Sesion: process.env.ID_SESION,
       K_Cliente_Remitente: 730738,
@@ -92,7 +113,7 @@ app.post("/shipping-rates", async (req, res) => {
       K_Oficina_Destino: 0,
       K_Tipo_Envio: 1,
       Entrega: 2,
-      Paquetes_Ampara: totalItems, 
+      Paquetes_Ampara: totalItems,
       K_Tipo_Guia: 2,
       usaBolsa: 0,
       esRecoleccion: 0,
