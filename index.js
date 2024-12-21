@@ -21,7 +21,6 @@ app.post("/shipping-rates", async (req, res) => {
   // Extraer los datos necesarios de la solicitud de Shopify
   const { origin, destination, items } = rate;
 
-
   if (!origin || !destination || !items) {
     console.error("Faltan datos necesarios para calcular las tarifas.");
     return res
@@ -29,15 +28,18 @@ app.post("/shipping-rates", async (req, res) => {
       .json({ error: "Faltan datos necesarios para calcular las tarifas." });
   }
 
+  // Calcular el total de items
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  console.log("Total de items a enviar:", totalItems);
 
   try {
     if (!process.env.ID_SESION) {
-        console.error("ID_Sesion no está definida en las variables de entorno.");
-        return res
-          .status(500)
-          .json({ error: "ID_Sesion no está definida en el servidor." });
-      }
-      console.log("Valor de ID_Sesion:", process.env.ID_SESION);
+      console.error("ID_Sesion no está definida en las variables de entorno.");
+      return res
+        .status(500)
+        .json({ error: "ID_Sesion no está definida en el servidor." });
+    }
+    console.log("Valor de ID_Sesion:", process.env.ID_SESION);
 
     //verificar barrio
     console.log("Barrio que se envía en la solicitud a wsBarrio:", destination.city);
@@ -89,7 +91,7 @@ app.post("/shipping-rates", async (req, res) => {
       K_Oficina_Destino: 0,
       K_Tipo_Envio: 1,
       Entrega: 2,
-      Paquetes_Ampara: 3,
+      Paquetes_Ampara: totalItems, // Aquí usamos el total de items calculado
       K_Tipo_Guia: 2,
       usaBolsa: 0,
       esRecoleccion: 0,
