@@ -31,7 +31,6 @@ app.post("/shipping-rates", async (req, res) => {
 
 
   try {
-    //verificar id
     if (!process.env.ID_SESION) {
         console.error("ID_Sesion no está definida en las variables de entorno.");
         return res
@@ -99,7 +98,7 @@ app.post("/shipping-rates", async (req, res) => {
 
     // Llamada a la API de DAC para calcular las tarifas
     const response = await fetch(
-      "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsObtieneCosto",
+      "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsObtieneCosto_Nuevo",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
