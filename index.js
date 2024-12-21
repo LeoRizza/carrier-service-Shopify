@@ -87,6 +87,7 @@ app.post("/shipping-rates", async (req, res) => {
       Direccion_Destinatario: "Soromio 4232",
       Detalle_Paquetes: "[{\"Tipo\":\"139\",\"Cantidad\":3}]",
       K_Oficina_Destino: 0,
+      K_Tipo_Envio: 1,
       Entrega: 2,
       Paquetes_Ampara: 3,
       K_Tipo_Guia: 2,
