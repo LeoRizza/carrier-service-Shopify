@@ -111,7 +111,7 @@ app.post("/shipping-rates", async (req, res) => {
       Direccion_Destinatario: "Soromio 4232",
       Detalle_Paquetes: Detalle_Paquetes,
       K_Oficina_Destino: 0,
-      K_Tipo_Envio: 1,
+      K_Tipo_Envio: 4,
       Entrega: 2,
       Paquetes_Ampara: totalItems,
       K_Tipo_Guia: 2,
