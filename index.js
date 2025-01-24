@@ -29,7 +29,7 @@ const enviarEmailConPegote = async (Pegote) => {
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: "tatenguelmr@gmail.com",
+      to: "carolina@treehousedeco.com",
       subject: "Nueva Etiqueta Generada",
       text: "Adjunto encontrarás la etiqueta en formato PDF.",
       attachments: [
