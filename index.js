@@ -177,8 +177,9 @@ app.post("/create", async (req, res) => {
       0
     );
 
-    const slash = "\\";
-    const Detalle_Paquetes = `[${slash}{"Cantidad":${totalItems},${slash}"Tipo":${tipo}${slash}}]`;
+    const Detalle_Paquetes = `[{"Cantidad":${totalItems},"Tipo":${tipo}}]`;
+
+    console.log("detalle_paquetes", Detalle_Paquetes)
 
     const CodigoPedido = `${order.id}`;
 
