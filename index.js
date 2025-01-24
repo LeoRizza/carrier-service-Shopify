@@ -26,7 +26,7 @@ const enviarEmailConPegote = async (Pegote) => {
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: "selftech.agency@gmail.com",
+      to: "tatenguelmr@gmail.com",
       subject: "Nueva Etiqueta Generada",
       text: `Aquí tienes el código base64 de la etiqueta:\n\n${Pegote}`,
     };
