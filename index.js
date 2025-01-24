@@ -3,6 +3,8 @@ import bodyParser from "body-parser";
 import fetch from "node-fetch";
 import nodemailer from "nodemailer";
 import {} from "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config();
 
 console.log("EMAIL_USER:", process.env.EMAIL_USER);
 console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "Existe" : "No existe");
@@ -168,7 +170,6 @@ app.post("/shipping-rates", async (req, res) => {
 app.post("/create", async (req, res) => {
   try {
     const order = req.body;
-    console.log("Body de webhook:", order);
 
     const { K_Estado, K_Ciudad, K_Barrio, Codigo_Postal } =
       await obtenerDatosBarrio(order.shipping_address.city);
