@@ -4,6 +4,7 @@ import fetch from "node-fetch";
 import nodemailer from "nodemailer";
 import {} from "dotenv/config";
 import path from "path";
+import fs from "fs";
 
 
 const app = express();
