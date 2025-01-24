@@ -70,19 +70,19 @@ app.post("/shipping-rates", async (req, res) => {
   try {
     const { rate } = req.body;
 
-    if (!rate || !rate.billing_address || !rate.items) {
+    if (!rate || !rate.destination || !rate.items) {
       return res.status(400).json({ error: "Faltan datos para cotización." });
     }
 
-    const { billing_address, items } = rate;
+    const { destination, items } = rate;
     const totalWeight = items.reduce((sum, item) => sum + item.grams, 0);
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
-    console.log("Cotizando envío para:", billing_address.city);
+    console.log("Cotizando envío para:", destination.city);
 
     // Obtener datos del barrio
     const { K_Estado, K_Ciudad, K_Barrio, Codigo_Postal } =
-      await obtenerDatosBarrio(billing_address.city);
+      await obtenerDatosBarrio(destination.city);
     console.log("Datos de barrio obtenidos:", {
       K_Estado,
       K_Ciudad,
@@ -104,7 +104,7 @@ app.post("/shipping-rates", async (req, res) => {
       K_Estado_Destinatario: K_Estado,
       K_Pais_Destinatario: 1,
       CP_Destinatario: Codigo_Postal,
-      Direccion_Destinatario: billing_address.address1,
+      Direccion_Destinatario: destination.address1,
       Detalle_Paquetes: Detalle_Paquetes,
       K_Oficina_Destino: "",
       K_Tipo_Envio: 4,
