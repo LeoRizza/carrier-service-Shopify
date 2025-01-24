@@ -10,14 +10,17 @@ app.use(bodyParser.json());
 //funcion enviar pegote
 const enviarEmailConPegote = async (Pegote) => {
   try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
+    const transport = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      service: 'gmail',
       auth: {
-        user: process.env.EMAIL_USER, // Email configurado en .env
-        pass: process.env.EMAIL_PASS,
-        authMethod: 'LOGIN' // Contraseña de aplicación configurada en .env
-      },
-    });
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+          authMethod: 'LOGIN'
+      }
+    })
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -26,8 +29,9 @@ const enviarEmailConPegote = async (Pegote) => {
       text: `Aquí tienes el código base64 de la etiqueta:\n\n${Pegote}`,
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log("Correo enviado exitosamente.");
+    const info = await transport.sendMail(mailOptions);
+
+    console.log("Correo enviado exitosamente:", info.response);
   } catch (error) {
     console.error("Error al enviar el correo:", error);
   }
