@@ -1,10 +1,36 @@
 import express from "express";
 import bodyParser from "body-parser";
 import fetch from "node-fetch";
+import nodemailer from "nodemailer";
 import {} from "dotenv/config";
 
 const app = express();
 app.use(bodyParser.json());
+
+//funcion enviar pegote
+const enviarEmailConPegote = async (Pegote) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER, // Email configurado en .env
+        pass: process.env.EMAIL_PASS, // Contraseña de aplicación configurada en .env
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: "selftech.agency@gmail.com",
+      subject: "Nueva Etiqueta Generada",
+      text: `Aquí tienes el código base64 de la etiqueta:\n\n${Pegote}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("Correo enviado exitosamente.");
+  } catch (error) {
+    console.error("Error al enviar el correo:", error);
+  }
+};
 
 // Función para obtener datos de barrio y ciudad
 const obtenerDatosBarrio = async (city) => {
@@ -227,6 +253,7 @@ app.post("/create", async (req, res) => {
     const { Pegote } = pegoteData.data;
 
     console.log("pegote", Pegote);
+    await enviarEmailConPegote(Pegote);
 
     // Enviar respuesta final con toda la información
     res.status(200).json({
