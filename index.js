@@ -179,7 +179,7 @@ app.post("/create", async (req, res) => {
       0
     );
 
-    const Detalle_Paquetes = `[{\\"Cantidad\\":${totalItems},\\"Tipo\\":${tipo}}]`;
+    const Detalle_Paquetes = '[{"Cantidad":' + totalItems + ',"Tipo":' + tipo + "}]";
 
     console.log("detalle_paquetes", Detalle_Paquetes);
 
@@ -215,7 +215,7 @@ app.post("/create", async (req, res) => {
       Serv_DDF: "",
     };
 
-    console.log("Enviando datos de envío:", envioBody);
+    console.log("Enviando datos de envío:", JSON.stringify(envioBody, null, 2));
 
     // Solicitud de creación de envío
     const envioResponse = await fetch(
