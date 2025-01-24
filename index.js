@@ -4,26 +4,28 @@ import fetch from "node-fetch";
 import nodemailer from "nodemailer";
 import {} from "dotenv/config";
 
+console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "Existe" : "No existe");
+console.log("SHOPIFY_API_KEY:", process.env.SHOPIFY_API_KEY);
+console.log("EMAIL_PASS:", process.env.ID_SESION ? "Existe" : "No existe");
+
 const app = express();
 app.use(bodyParser.json());
 
 //funcion enviar pegote
 const enviarEmailConPegote = async (Pegote) => {
   try {
-    console.log("EMAIL_USER:", process.env.EMAIL_USER);
-    console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "Existe" : "No existe");
-
     const transport = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
+      host: "smtp.gmail.com",
       port: 465,
       secure: true,
-      service: 'gmail',
+      service: "gmail",
       auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-          authMethod: 'LOGIN'
-      }
-    })
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+        authMethod: "LOGIN",
+      },
+    });
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -187,7 +189,8 @@ app.post("/create", async (req, res) => {
       0
     );
 
-    const Detalle_Paquetes = '[{"Cantidad":' + totalItems + ',"Tipo":' + tipo + "}]";
+    const Detalle_Paquetes =
+      '[{"Cantidad":' + totalItems + ',"Tipo":' + tipo + "}]";
 
     console.log("detalle_paquetes", Detalle_Paquetes);
 
