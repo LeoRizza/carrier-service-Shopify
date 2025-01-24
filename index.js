@@ -176,7 +176,7 @@ app.post("/create", async (req, res) => {
       (sum, item) => sum + item.quantity,
       0
     );
-    const Detalle_Paquetes = `[{"Cantidad":${totalItems},"Tipo":${tipo}}]`;
+    const Detalle_Paquetes = `[{\\"Cantidad\\":${totalItems},\\"Tipo\\":${tipo}}]`;
 
     const CodigoPedido = `${order.id}`;
 
@@ -197,7 +197,7 @@ app.post("/create", async (req, res) => {
       K_Oficina_Destino: "",
       Entrega: 2,
       Paquetes_Ampara: totalItems,
-      Detalle_Paquetes: JSON.parse(Detalle_Paquetes),
+      Detalle_Paquetes: Detalle_Paquetes,
       Observaciones: "Pedido desde Shopify",
       K_Tipo_Guia: 2,
       K_Tipo_Envio: 4,
