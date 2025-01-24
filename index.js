@@ -6,100 +6,70 @@ import {} from "dotenv/config";
 const app = express();
 app.use(bodyParser.json());
 
+// Función para obtener datos de barrio y ciudad
+const obtenerDatosBarrio = async (city) => {
+  const response = await fetch(
+    "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsBarrio",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ID_Sesion: process.env.ID_SESION,
+        Barrrio: city,
+      }),
+    }
+  );
+
+  const barrioData = await response.json();
+  if (!barrioData.data || barrioData.data.length === 0) {
+    throw new Error("Datos del barrio no encontrados.");
+  }
+
+  return barrioData.data[0]; // Devuelve K_Estado, K_Ciudad, K_Barrio, Codigo_Postal
+};
+
+// Función para determinar el tipo de paquete según el peso
+const calcularTipoPaquete = (totalWeight) => {
+  if (totalWeight <= 2000) return "204";
+  if (totalWeight <= 5000) return "139";
+  if (totalWeight <= 10000) return "206";
+  if (totalWeight <= 15000) return "140";
+  if (totalWeight <= 20000) return "207";
+  if (totalWeight <= 25000) return "141";
+  throw new Error("El peso total excede el límite permitido de 25kg.");
+};
+
+// Endpoint para cotización de envíos
 app.post("/shipping-rates", async (req, res) => {
-  const { rate } = req.body;
-
-  console.log("Solicitud recibida de Shopify:", req.body);
-
-  if (!rate) {
-    console.error("No se recibió la información de la tarifa.");
-    return res
-      .status(400)
-      .json({ error: "No se recibió la información de la tarifa." });
-  }
-
-  // Extraer los datos necesarios de la solicitud de Shopify
-  const { origin, destination, items } = rate;
-
-  if (!origin || !destination || !items) {
-    console.error("Faltan datos necesarios para calcular las tarifas.");
-    return res
-      .status(400)
-      .json({ error: "Faltan datos necesarios para calcular las tarifas." });
-  }
-
-  // Calcular el total de items
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalWeight = items.reduce((sum, item) => sum + item.grams, 0);
-  console.log("Total de items a enviar:", totalItems);
-  console.log("Total peso a enviar:", totalWeight);
-
   try {
-    if (!process.env.ID_SESION) {
-      console.error("ID_Sesion no está definida en las variables de entorno.");
-      return res
-        .status(500)
-        .json({ error: "ID_Sesion no está definida en el servidor." });
-    }
-    console.log("Valor de ID_Sesion:", process.env.ID_SESION);
+    const { rate } = req.body;
 
-    //verificar barrio
-    console.log(
-      "Barrio que se envía en la solicitud a wsBarrio:",
-      destination.city
-    );
-    const barrioResponse = await fetch(
-      "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsBarrio",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ID_Sesion: process.env.ID_SESION,
-          Barrrio: destination.city,
-        }),
-      }
-    );
-
-    console.log("Estado de la respuesta de wsBarrio:", barrioResponse.status);
-    const barrioData = await barrioResponse.json();
-    console.log("Respuesta completa de wsBarrio:", barrioData);
-
-    if (!barrioData.data || barrioData.data.length === 0) {
-      console.error(
-        "Error en la respuesta de wsBarrio: datos vacíos o no encontrados"
-      );
-      return res
-        .status(400)
-        .json({ error: "Datos del barrio no encontrados." });
+    if (!rate || !rate.billing_address || !rate.items) {
+      return res.status(400).json({ error: "Faltan datos para cotización." });
     }
 
-    const { K_Estado, K_Ciudad, K_Barrio, Codigo_Postal } = barrioData.data[0];
-    console.log("Datos extraídos de wsBarrio:", {
+    const { billing_address, items } = rate;
+    const totalWeight = items.reduce((sum, item) => sum + item.grams, 0);
+    const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+
+    console.log("Cotizando envío para:", billing_address.city);
+
+    // Obtener datos del barrio
+    const { K_Estado, K_Ciudad, K_Barrio, Codigo_Postal } =
+      await obtenerDatosBarrio(billing_address.city);
+    console.log("Datos de barrio obtenidos:", {
       K_Estado,
       K_Ciudad,
       K_Barrio,
       Codigo_Postal,
     });
 
-    let tipo;
-    if (totalWeight <= 2000) tipo = "204";
-    else if (totalWeight <= 5000) tipo = "139";
-    else if (totalWeight <= 10000) tipo = "206";
-    else if (totalWeight <= 15000) tipo = "140";
-    else if (totalWeight <= 20000) tipo = "207";
-    else if (totalWeight <= 25000) tipo = "141";
-    else {
-      console.error("Peso excede el límite máximo de 25kg.");
-      return res
-        .status(400)
-        .json({ error: "El peso total excede el límite permitido de 25kg." });
-    }
-
+    const tipo = calcularTipoPaquete(totalWeight);
     const Detalle_Paquetes = JSON.stringify([
       { Tipo: tipo, Cantidad: totalItems },
     ]);
 
-    const body = {
+    const cotizacionBody = {
       ID_Sesion: process.env.ID_SESION,
       K_Cliente_Remitente: 730738,
       K_Cliente_Destinatario: 5,
@@ -108,46 +78,40 @@ app.post("/shipping-rates", async (req, res) => {
       K_Estado_Destinatario: K_Estado,
       K_Pais_Destinatario: 1,
       CP_Destinatario: Codigo_Postal,
-      Direccion_Destinatario: "Soromio 4232",
+      Direccion_Destinatario: billing_address.address1,
       Detalle_Paquetes: Detalle_Paquetes,
-      K_Oficina_Destino: 0,
+      K_Oficina_Destino: "",
       K_Tipo_Envio: 4,
       Entrega: 2,
       Paquetes_Ampara: totalItems,
       K_Tipo_Guia: 2,
-      usaBolsa: 0,
-      esRecoleccion: 0,
+      usaBolsa: "",
+      esRecoleccion: "",
     };
 
-    console.log("Cuerpo de la solicitud a wsObtieneCosto:", body);
+    console.log("Solicitando cotización con datos:", cotizacionBody);
 
     const response = await fetch(
       "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsObtieneCosto_Nuevo",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify(cotizacionBody),
       }
     );
 
     const data = await response.json();
-    console.log("Respuesta de wsObtieneCosto:", data);
 
     if (data.result !== 0) {
-      console.error("Error al calcular tarifas:", data);
-      return res.status(500).json({ error: "Error al calcular tarifas." });
+      throw new Error("Error en la cotización de tarifas.");
     }
 
-    // Extraer Total_Guia de la respuesta
-    const totalGuia = data.data.Total_Guia;
-
-    // Devuelve las tarifas al checkout de Shopify
     res.json({
       rates: [
         {
           service_name: "DAC Express",
           service_code: "DAC",
-          total_price: totalGuia * 100, // Total en centavos
+          total_price: data.data.Total_Guia * 100,
           currency: "UYU",
           min_delivery_date: new Date().toISOString(),
           max_delivery_date: new Date(
@@ -157,8 +121,124 @@ app.post("/shipping-rates", async (req, res) => {
       ],
     });
   } catch (error) {
-    console.error("Error al calcular tarifas:", error);
-    res.status(500).json({ error: "Error al calcular tarifas." });
+    console.error("Error al cotizar envío:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Endpoint para crear el envío
+app.post("/create", async (req, res) => {
+  try {
+    const order = req.body;
+    console.log("Body de webhook:", order);
+
+    const { K_Estado, K_Ciudad, K_Barrio, Codigo_Postal } =
+      await obtenerDatosBarrio(order.shipping_address.city);
+    console.log("Datos de barrio para envío:", {
+      K_Estado,
+      K_Ciudad,
+      K_Barrio,
+      Codigo_Postal,
+    });
+
+    const totalWeight = order.line_items.reduce(
+      (sum, item) => sum + item.grams,
+      0
+    );
+    const tipo = calcularTipoPaquete(totalWeight);
+    const totalItems = order.line_items.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    );
+    const CodigoPedido = `${order.id}`;
+
+    const envioBody = {
+      ID_Sesion: "OTkwOTA0NjEzMDMzODI0SmFuMjAyNTAwOjE4OjQ2OjM0MA==",
+      K_Cliente_Remitente: 730738,
+      D_Cliente_Remitente: "THREE HOUSE DECO",
+      K_Cliente_Destinatario: 5,
+      Cliente_Destinatario: order.shipping_address.name,
+      RUT: 218717110015,
+      Direccion_Destinatario: order.shipping_address.address1,
+      K_Barrio: K_Barrio,
+      K_Ciudad_Destinatario: K_Ciudad,
+      K_Estado_Destinatario: K_Estado,
+      K_Pais_Destinatario: 1,
+      CP_Destinatario: Codigo_Postal,
+      Telefono: order.shipping_address.phone || "",
+      K_Oficina_Destino: "",
+      Entrega: 2,
+      Paquetes_Ampara: totalItems,
+      Detalle_Paquetes: JSON.stringify([{ Tipo: tipo, Cantidad: totalItems }]),
+      Observaciones: "Pedido desde Shopify",
+      K_Tipo_Guia: 2,
+      K_Tipo_Envio: 4,
+      CostoMercaderia: "",
+      Referencia_Pago: "",
+      CodigoPedido: CodigoPedido,
+      Serv_Cita: "",
+      Latitud_Destino: "",
+      Longitud_Destino: "",
+      Serv_DDF: "",
+    };
+
+    console.log("Enviando datos de envío:", envioBody);
+
+    // Solicitud de creación de envío
+    const envioResponse = await fetch(
+      "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsInGuia_Nuevo",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(envioBody),
+      }
+    );
+
+    const trackingInfo = await envioResponse.json();
+
+    if (trackingInfo.result !== 0) {
+      throw new Error("Error al crear el envío");
+    }
+
+    // Generar sticker usando la API wsGetPegote
+    const pegoteRequestBody = {
+      K_Oficina: "",
+      K_Guia: "",
+      ID_Sesion: process.env.ID_SESION,
+      CodigoPedido: CodigoPedido,
+    };
+
+    const pegoteResponse = await fetch(
+      "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsGetPegote",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pegoteRequestBody),
+      }
+    );
+
+    const pegoteData = await pegoteResponse.json();
+
+    if (pegoteData.result !== 0) {
+      throw new Error("Error al obtener el sticker");
+    }
+
+    // Extraer el valor de Pegote (código base64 de la imagen)
+    const { Pegote } = pegoteData.data;
+
+    console.log("pegote", Pegote);
+
+    // Enviar respuesta final con toda la información
+    res.status(200).json({
+      message: "Envío creado exitosamente.",
+      trackingInfo,
+      sticker: Pegote,
+    });
+  } catch (error) {
+    console.error("Error al crear el envío:", error.message);
+    if (!res.headersSent) {
+      res.status(500).json({ error: error.message });
+    }
   }
 });
 
