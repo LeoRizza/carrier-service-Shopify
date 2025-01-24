@@ -95,7 +95,7 @@ app.post("/shipping-rates", async (req, res) => {
       { Tipo: tipo, Cantidad: totalItems },
     ]);
 
-    console.log("detalle_prod", Detalle_Paquetes)
+    console.log("detalle_prod", Detalle_Paquetes);
 
     const cotizacionBody = {
       ID_Sesion: process.env.ID_SESION,
@@ -179,9 +179,9 @@ app.post("/create", async (req, res) => {
       0
     );
 
-    const Detalle_Paquetes = '[{\\"Cantidad\\":' + totalItems + ',\\"Tipo\\":' + tipo + '}]';
+    const Detalle_Paquetes = `[{\\"Cantidad\\":${totalItems},\\"Tipo\\":${tipo}}]`;
 
-    console.log("detalle_paquetes", Detalle_Paquetes)
+    console.log("detalle_paquetes", Detalle_Paquetes);
 
     const CodigoPedido = `${order.id}`;
 
