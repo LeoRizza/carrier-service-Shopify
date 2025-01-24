@@ -104,7 +104,7 @@ app.post("/shipping-rates", async (req, res) => {
       K_Estado_Destinatario: K_Estado,
       K_Pais_Destinatario: 1,
       CP_Destinatario: Codigo_Postal,
-      Direccion_Destinatario: destination.address1,
+      Direccion_Destinatario: rate.destination.address1,
       Detalle_Paquetes: Detalle_Paquetes,
       K_Oficina_Destino: "",
       K_Tipo_Envio: 4,
