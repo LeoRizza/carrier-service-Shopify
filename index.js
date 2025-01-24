@@ -271,7 +271,6 @@ app.post("/create", async (req, res) => {
     // Extraer el valor de Pegote (código base64 de la imagen)
     const { Pegote } = pegoteData.data;
 
-    console.log("pegote", Pegote);
     await enviarEmailConPegote(Pegote);
 
     // Enviar respuesta final con toda la información
