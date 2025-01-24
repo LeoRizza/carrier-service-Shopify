@@ -22,6 +22,9 @@ const enviarEmailConPegote = async (Pegote) => {
       }
     })
 
+    console.log("EMAIL_USER:", process.env.EMAIL_USER);
+    console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "Existe" : "No existe");
+
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: "selftech.agency@gmail.com",
