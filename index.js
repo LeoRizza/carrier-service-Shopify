@@ -177,7 +177,7 @@ app.post("/create", async (req, res) => {
       0
     );
     
-    const Detalle_Paquetes = '[{\\"Cantidad\\":' + totalItems + ',\\"Tipo\\":' + tipo + '}]';
+    const Detalle_Paquetes = '[{\"Cantidad\":' + totalItems + ',\"Tipo\":' + tipo + '}]';
 
     const CodigoPedido = `${order.id}`;
 
