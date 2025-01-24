@@ -12,10 +12,6 @@ app.use(bodyParser.json());
 //funcion enviar pegote
 const enviarEmailConPegote = async (Pegote) => {
   try {
-    console.log("EMAIL_USER:", process.env.EMAIL_USER);
-    console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "Existe" : "No existe");
-    console.log("SHOPIFY_API_KEY:", process.env.SHOPIFY_API_KEY);
-    console.log("EMAIL_PASS:", process.env.ID_SESION ? "Existe" : "No existe");
     const transport = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 465,
@@ -197,7 +193,7 @@ app.post("/create", async (req, res) => {
     const CodigoPedido = `${order.id}`;
 
     const envioBody = {
-      ID_Sesion: "OTkwOTA0NjEzMDMzODI0SmFuMjAyNTEwOjQ4OjI0Ojg5MA==",
+      ID_Sesion: process.env.ID_SESION,
       K_Cliente_Remitente: 730738,
       D_Cliente_Remitente: "THREE HOUSE DECO",
       K_Cliente_Destinatario: 5,
@@ -230,7 +226,7 @@ app.post("/create", async (req, res) => {
 
     // Solicitud de creación de envío
     const envioResponse = await fetch(
-      "https://altis-ws.grupoagencia.com:444/JAgenciaQA/JAgencia.asmx/wsInGuia_Nuevo",
+      "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsInGuia_Nuevo",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -248,12 +244,12 @@ app.post("/create", async (req, res) => {
     const pegoteRequestBody = {
       K_Oficina: "",
       K_Guia: "",
-      ID_Sesion: "OTkwOTA0NjEzMDMzODI0SmFuMjAyNTEwOjQ4OjI0Ojg5MA==",
+      ID_Sesion: process.env.ID_SESION,
       CodigoPedido: CodigoPedido,
     };
 
     const pegoteResponse = await fetch(
-      "https://altis-ws.grupoagencia.com:444/JAgenciaQA/JAgencia.asmx/wsGetPegote",
+      "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsGetPegote",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
