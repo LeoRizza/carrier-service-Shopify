@@ -179,9 +179,7 @@ app.post("/create", async (req, res) => {
       0
     );
 
-    const Detalle_Paquetes = JSON.stringify([
-      { Tipo: tipo, Cantidad: totalItems },
-    ]);
+    const Detalle_Paquetes = '[{\\"Cantidad\\":' + totalItems + ',\\"Tipo\\":' + tipo + '}]';
 
     console.log("detalle_paquetes", Detalle_Paquetes)
 
