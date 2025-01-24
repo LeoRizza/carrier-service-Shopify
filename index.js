@@ -177,7 +177,9 @@ app.post("/create", async (req, res) => {
       0
     );
     const CodigoPedido = `${order.id}`;
-
+    const Detalle_Paquetes = JSON.stringify([
+      { Tipo: tipo, Cantidad: totalItems },
+    ]);
     const envioBody = {
       ID_Sesion: process.env.ID_SESION,
       K_Cliente_Remitente: 730738,
@@ -195,7 +197,7 @@ app.post("/create", async (req, res) => {
       K_Oficina_Destino: "",
       Entrega: 2,
       Paquetes_Ampara: totalItems,
-      Detalle_Paquetes: JSON.stringify([{ Tipo: tipo, Cantidad: totalItems }]),
+      Detalle_Paquetes: Detalle_Paquetes,
       Observaciones: "Pedido desde Shopify",
       K_Tipo_Guia: 2,
       K_Tipo_Envio: 4,
@@ -212,7 +214,7 @@ app.post("/create", async (req, res) => {
 
     // Solicitud de creación de envío
     const envioResponse = await fetch(
-      "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsInGuia_Nuevo",
+      "https://altis-ws.grupoagencia.com:444/JAgenciaQA/JAgencia.asmx/wsInGuia_Nuevo",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
