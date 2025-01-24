@@ -176,9 +176,8 @@ app.post("/create", async (req, res) => {
       (sum, item) => sum + item.quantity,
       0
     );
-    const Detalle_Paquetes = JSON.stringify([
-      { Cantidad: totalItems, Tipo: tipo },
-    ]).replace(/"/g, '\\"');
+    
+    const Detalle_Paquetes = '[{\\"Cantidad\\":' + totalItems + ',\\"Tipo\\":' + tipo + '}]';
 
     const CodigoPedido = `${order.id}`;
 
