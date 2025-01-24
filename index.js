@@ -56,7 +56,7 @@ const obtenerDatosBarrio = async (city) => {
 
 // Función para determinar el tipo de paquete según el peso
 const calcularTipoPaquete = (totalWeight) => {
-  if (totalWeight <= 2000) return "204";
+  if (totalWeight <= 2000) return "139";
   if (totalWeight <= 5000) return "139";
   if (totalWeight <= 10000) return "206";
   if (totalWeight <= 15000) return "140";
