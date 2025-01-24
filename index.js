@@ -6,17 +6,16 @@ import {} from "dotenv/config";
 import dotenv from "dotenv";
 dotenv.config();
 
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "Existe" : "No existe");
-console.log("SHOPIFY_API_KEY:", process.env.SHOPIFY_API_KEY);
-console.log("EMAIL_PASS:", process.env.ID_SESION ? "Existe" : "No existe");
-
 const app = express();
 app.use(bodyParser.json());
 
 //funcion enviar pegote
 const enviarEmailConPegote = async (Pegote) => {
   try {
+    console.log("EMAIL_USER:", process.env.EMAIL_USER);
+    console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "Existe" : "No existe");
+    console.log("SHOPIFY_API_KEY:", process.env.SHOPIFY_API_KEY);
+    console.log("EMAIL_PASS:", process.env.ID_SESION ? "Existe" : "No existe");
     const transport = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 465,
