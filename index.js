@@ -14,7 +14,8 @@ const enviarEmailConPegote = async (Pegote) => {
       service: "gmail",
       auth: {
         user: process.env.EMAIL_USER, // Email configurado en .env
-        pass: process.env.EMAIL_PASS, // Contraseña de aplicación configurada en .env
+        pass: process.env.EMAIL_PASS,
+        authMethod: 'LOGIN' // Contraseña de aplicación configurada en .env
       },
     });
 
