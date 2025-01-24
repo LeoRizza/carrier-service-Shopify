@@ -3,9 +3,6 @@ import bodyParser from "body-parser";
 import fetch from "node-fetch";
 import nodemailer from "nodemailer";
 import {} from "dotenv/config";
-import path from "path";
-import fs from "fs";
-
 
 const app = express();
 app.use(bodyParser.json());
@@ -13,12 +10,8 @@ app.use(bodyParser.json());
 //funcion enviar pegote
 const enviarEmailConPegote = async (Pegote) => {
   try {
-    // Convertir la cadena Base64 a un buffer
-    const imageBuffer = Buffer.from(Pegote, "base64");
-
-    // Guardar la imagen temporalmente en el servidor (opcional, si no quieres enviarla directamente desde memoria)
-    const imagePath = path.join("/tmp", "pegote.png");
-    fs.writeFileSync(imagePath, imageBuffer);
+    console.log("EMAIL_USER:", process.env.EMAIL_USER);
+    console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "Existe" : "No existe");
 
     const transport = nodemailer.createTransport({
       host: "smtp.gmail.com",
@@ -31,31 +24,32 @@ const enviarEmailConPegote = async (Pegote) => {
       },
     });
 
+    // Convertir el PDF Base64 a un Buffer (sin eliminar prefijos)
+    const pdfBuffer = Buffer.from(Pegote, "base64");
+
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: "tatenguelmr@gmail.com",
       subject: "Nueva Etiqueta Generada",
-      text: "Adjunto encontrarás la etiqueta en formato PNG.",
+      text: "Adjunto encontrarás la etiqueta en formato PDF.",
       attachments: [
         {
-          filename: "pegote.png",
-          content: imageBuffer, // Se adjunta directamente desde la memoria
+          filename: "etiqueta.pdf",
+          content: pdfBuffer,
           encoding: "base64",
+          contentType: "application/pdf",
         },
       ],
     };
 
-    const info = await transport.sendMail(mailOptions);
+    await transport.sendMail(mailOptions);
 
-    console.log("Correo enviado exitosamente:", info.response);
-
-    // Opcional: eliminar el archivo temporal después de enviarlo
-    fs.unlinkSync(imagePath);
-
+    console.log("Correo enviado exitosamente con el PDF adjunto.");
   } catch (error) {
     console.error("Error al enviar el correo:", error);
   }
 };
+
 
 // Función para obtener datos de barrio y ciudad
 const obtenerDatosBarrio = async (city) => {
