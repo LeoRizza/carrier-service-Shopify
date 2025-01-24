@@ -3,8 +3,8 @@ import bodyParser from "body-parser";
 import fetch from "node-fetch";
 import nodemailer from "nodemailer";
 import {} from "dotenv/config";
-import dotenv from "dotenv";
-dotenv.config();
+import path from "path";
+
 
 const app = express();
 app.use(bodyParser.json());
@@ -12,6 +12,13 @@ app.use(bodyParser.json());
 //funcion enviar pegote
 const enviarEmailConPegote = async (Pegote) => {
   try {
+    // Convertir la cadena Base64 a un buffer
+    const imageBuffer = Buffer.from(Pegote, "base64");
+
+    // Guardar la imagen temporalmente en el servidor (opcional, si no quieres enviarla directamente desde memoria)
+    const imagePath = path.join("/tmp", "pegote.png");
+    fs.writeFileSync(imagePath, imageBuffer);
+
     const transport = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 465,
@@ -20,7 +27,6 @@ const enviarEmailConPegote = async (Pegote) => {
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
-        authMethod: "LOGIN",
       },
     });
 
@@ -28,12 +34,23 @@ const enviarEmailConPegote = async (Pegote) => {
       from: process.env.EMAIL_USER,
       to: "tatenguelmr@gmail.com",
       subject: "Nueva Etiqueta Generada",
-      text: `Aquí tienes el código base64 de la etiqueta:\n\n${Pegote}`,
+      text: "Adjunto encontrarás la etiqueta en formato PNG.",
+      attachments: [
+        {
+          filename: "pegote.png",
+          content: imageBuffer, // Se adjunta directamente desde la memoria
+          encoding: "base64",
+        },
+      ],
     };
 
     const info = await transport.sendMail(mailOptions);
 
     console.log("Correo enviado exitosamente:", info.response);
+
+    // Opcional: eliminar el archivo temporal después de enviarlo
+    fs.unlinkSync(imagePath);
+
   } catch (error) {
     console.error("Error al enviar el correo:", error);
   }
