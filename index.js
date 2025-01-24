@@ -242,7 +242,7 @@ app.post("/create", async (req, res) => {
     };
 
     const pegoteResponse = await fetch(
-      "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsGetPegote",
+      "https://altis-ws.grupoagencia.com:444/JAgenciaQA/JAgencia.asmx/wsGetPegote",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
