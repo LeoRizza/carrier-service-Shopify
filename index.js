@@ -237,7 +237,7 @@ app.post("/create", async (req, res) => {
     const pegoteRequestBody = {
       K_Oficina: "",
       K_Guia: "",
-      ID_Sesion: process.env.ID_SESION,
+      ID_Sesion: "OTkwOTA0NjEzMDMzODI0SmFuMjAyNTEwOjQ4OjI0Ojg5MA==",
       CodigoPedido: CodigoPedido,
     };
 
