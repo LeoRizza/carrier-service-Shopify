@@ -95,6 +95,8 @@ app.post("/shipping-rates", async (req, res) => {
       { Tipo: tipo, Cantidad: totalItems },
     ]);
 
+    console.log("detalle_prod", Detalle_Paquetes)
+
     const cotizacionBody = {
       ID_Sesion: process.env.ID_SESION,
       K_Cliente_Remitente: 730738,
