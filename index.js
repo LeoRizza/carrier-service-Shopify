@@ -176,10 +176,10 @@ app.post("/create", async (req, res) => {
       (sum, item) => sum + item.quantity,
       0
     );
+    const Detalle_Paquetes = `[{"Cantidad":${totalItems},"Tipo":${tipo}}]`;
+
     const CodigoPedido = `${order.id}`;
-    const Detalle_Paquetes = JSON.stringify([
-      { Tipo: tipo, Cantidad: totalItems },
-    ]);
+
     const envioBody = {
       ID_Sesion: process.env.ID_SESION,
       K_Cliente_Remitente: 730738,
