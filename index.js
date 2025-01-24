@@ -10,6 +10,9 @@ app.use(bodyParser.json());
 //funcion enviar pegote
 const enviarEmailConPegote = async (Pegote) => {
   try {
+    console.log("EMAIL_USER:", process.env.EMAIL_USER);
+    console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "Existe" : "No existe");
+
     const transport = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 465,
@@ -21,9 +24,6 @@ const enviarEmailConPegote = async (Pegote) => {
           authMethod: 'LOGIN'
       }
     })
-
-    console.log("EMAIL_USER:", process.env.EMAIL_USER);
-    console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "Existe" : "No existe");
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
