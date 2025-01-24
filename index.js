@@ -179,7 +179,7 @@ app.post("/create", async (req, res) => {
     const CodigoPedido = `${order.id}`;
 
     const envioBody = {
-      ID_Sesion: "OTkwOTA0NjEzMDMzODI0SmFuMjAyNTAwOjE4OjQ2OjM0MA==",
+      ID_Sesion: process.env.ID_SESION,
       K_Cliente_Remitente: 730738,
       D_Cliente_Remitente: "THREE HOUSE DECO",
       K_Cliente_Destinatario: 5,
