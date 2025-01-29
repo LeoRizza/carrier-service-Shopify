@@ -176,6 +176,7 @@ app.post("/shipping-rates", async (req, res) => {
 
 // Endpoint para crear el envío
 app.post("/create", async (req, res) => {
+  console.log("Cuerpo recibido en /create:", JSON.stringify(req.body, null, 2));
   try {
     const order = req.body;
 
