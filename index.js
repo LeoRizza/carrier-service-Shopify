@@ -135,7 +135,7 @@ app.post("/shipping-rates", async (req, res) => {
     console.log("direcicon de envio:", destination.address1);
     // Obtener datos del barrio
     const { K_Estado, K_Ciudad, K_Barrio, Codigo_Postal } =
-      await obtenerDatosBarrio(destination.city);
+      await obtenerDatosBarrio(destination.province);
     console.log("Datos de barrio obtenidos:", {
       K_Estado,
       K_Ciudad,
