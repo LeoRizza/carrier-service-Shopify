@@ -151,7 +151,6 @@ app.post("/shipping-rates", async (req, res) => {
     const totalWeight = items.reduce((sum, item) => sum + item.grams, 0);
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
-    console.log("Cotizando envío para:", destination.city);
     console.log("Provincia:", destination.province)
     console.log("direcicon de envio:", destination.address1);
     // Obtener datos del barrio
@@ -235,7 +234,7 @@ app.post("/create", async (req, res) => {
     const order = req.body;
 
     const { K_Estado, K_Ciudad, K_Barrio, Codigo_Postal } =
-      await obtenerDatosBarrio(order.shipping_address.city);
+      await obtenerDatosBarrio(order.shipping_address.province);
     console.log("Datos de barrio para envío:", {
       K_Estado,
       K_Ciudad,
