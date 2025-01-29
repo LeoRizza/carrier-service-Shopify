@@ -52,7 +52,7 @@ const enviarEmailConPegote = async (Pegote) => {
 
 
 // Función para obtener datos de barrio y ciudad
-const obtenerDatosBarrio = async (city) => {
+/* const obtenerDatosBarrio = async (city) => {
   const response = await fetch(
     "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsBarrio",
     {
@@ -71,7 +71,40 @@ const obtenerDatosBarrio = async (city) => {
   }
 
   return barrioData.data[0]; // Devuelve K_Estado, K_Ciudad, K_Barrio, Codigo_Postal
+}; */
+
+const obtenerDatosBarrio = async (city) => {
+  console.log("Ciudad recibida:", city);
+
+  // Verifica si city es un código de provincia y conviértelo
+  if (provinciasMap[city]) {
+    city = provinciasMap[city];
+    console.log("Ciudad convertida a:", city);
+  } else {
+    console.warn("⚠️ Código de provincia desconocido:", city);
+  }
+
+  const response = await fetch(
+    "https://altis-ws.grupoagencia.com:444/JAgencia/JAgencia.asmx/wsBarrio",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ID_Sesion: process.env.ID_SESION,
+        Barrrio: city,
+      }),
+    }
+  );
+
+  const barrioData = await response.json();
+
+  if (!barrioData.data || barrioData.data.length === 0) {
+    throw new Error("Datos del barrio no encontrados.");
+  }
+
+  return barrioData.data[0]; // Devuelve K_Estado, K_Ciudad, K_Barrio, Codigo_Postal
 };
+
 
 // Función para determinar el tipo de paquete según el peso
 const calcularTipoPaquete = (totalWeight) => {
