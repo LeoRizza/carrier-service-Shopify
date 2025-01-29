@@ -72,6 +72,27 @@ const enviarEmailConPegote = async (Pegote) => {
 
   return barrioData.data[0]; // Devuelve K_Estado, K_Ciudad, K_Barrio, Codigo_Postal
 }; */
+const provinciasMap = {
+  "UY-AR": "Artigas",
+  "UY-CA": "Canelones",
+  "UY-CL": "Cerro Largo",
+  "UY-CO": "Colonia",
+  "UY-DU": "Durazno",
+  "UY-FS": "Flores",
+  "UY-FD": "Florida",
+  "UY-LA": "Lavalleja",
+  "UY-MA": "Maldonado",
+  "UY-MO": "Montevideo",
+  "UY-PA": "Paysandú",
+  "UY-RN": "Río Negro",
+  "UY-RV": "Rivera",
+  "UY-RO": "Rocha",
+  "UY-SA": "Salto",
+  "UY-SJ": "San José",
+  "UY-SO": "Soriano",
+  "UY-TA": "Tacuarembó",
+  "UY-TT": "Treinta y Tres"
+};
 
 const obtenerDatosBarrio = async (city) => {
   console.log("Ciudad recibida:", city);
