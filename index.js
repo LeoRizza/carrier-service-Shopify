@@ -262,7 +262,7 @@ app.post("/create", async (req, res) => {
     const envioBody = {
       ID_Sesion: process.env.ID_SESION,
       K_Cliente_Remitente: 730738,
-      D_Cliente_Remitente: "THREE HOUSE DECO",
+      D_Cliente_Remitente: "TREE HOUSE DECO",
       K_Cliente_Destinatario: 5,
       Cliente_Destinatario: order.shipping_address.name,
       RUT: 218717110015,
